@@ -6,8 +6,10 @@ from telegram import ReplyKeyboardMarkup, KeyboardButton
 import tkinter as tk
 from tkinter import filedialog
 from threading import Thread
+from datetime import datetime
 
 from path_configures import convert_file
+from save_data import save_data
 
 
 with open('token.txt', 'r') as token_file:
@@ -62,6 +64,7 @@ def reply_message(update, context):
                                   document=open(new_file, 'rb'),
                                   filename=new_file)['document']
         os.remove(new_file)
+        save_data(update.message.chat.first_name, update.message.text, f'Sent document: {new_file}', datetime.now())
     else:
         context.bot.send_message(chat_id=chat.id, text="Unknown command 🤷‍♂️")
 
