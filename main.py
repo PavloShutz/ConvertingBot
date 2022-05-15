@@ -41,7 +41,7 @@ def start_bot(update, context):
                                   f"If you want to convert "
                                   "any file, please choose a button "
                                   "below."
-                                  "\nWrite help for more info.",
+                                  "\nWrite /help for more info.",
                              reply_markup=ReplyKeyboardMarkup(
                                  extensions_buttons))
 
