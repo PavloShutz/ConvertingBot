@@ -4,8 +4,9 @@ import os
 from pathlib import Path
 import shutil
 
-from convertatings import convert_to_mp4, convert_to_pdf, convert_to_image_format, \
-    convert_to_docx, convert_to_csv, convert_to_txt, convert_to_mp3, \
+from convertatings import convert_to_mp4, convert_to_pdf, \
+    convert_to_image_format, convert_to_docx, \
+    convert_to_csv, convert_to_txt, convert_to_mp3, \
     convert_to_doc
 from file_formats import IMAGES_FORMATS, VIDEO_FORMATS, DOCUMENT_FORMATS
 
@@ -28,7 +29,9 @@ def convert_file(file: str, extension: str) -> str:
         if extension == '.mp3':
             return convert_to_mp3(file)
         elif extension == '.mp4':
-            return convert_to_mp4(original_path, os.path.splitext(f"{Path(file)}")[0] + ".mp4")
+            return convert_to_mp4(original_path,
+                                  os.path.splitext(
+                                      f"{Path(file)}")[0] + ".mp4")
     elif extension in DOCUMENT_FORMATS:
         if extension == '.docx':
             return convert_to_docx(file, target_path)

@@ -18,9 +18,9 @@ updater = Updater(data)
 
 extensions_buttons = [[KeyboardButton(".pdf")], [KeyboardButton(".jpeg")],
                       [KeyboardButton(".txt")], [KeyboardButton(".bmp")],
-                      [KeyboardButton(".jpg")], [KeyboardButton(".pptx")], 
-                      [KeyboardButton(".bin")], [KeyboardButton(".csv")], 
-                      [KeyboardButton(".mp3")], [KeyboardButton(".docx")], 
+                      [KeyboardButton(".jpg")], [KeyboardButton(".pptx")],
+                      [KeyboardButton(".bin")], [KeyboardButton(".csv")],
+                      [KeyboardButton(".mp3")], [KeyboardButton(".docx")],
                       [KeyboardButton(".mp4")], [KeyboardButton(".png")],
                       [KeyboardButton(".ico")]]
 

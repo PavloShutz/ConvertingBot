@@ -6,8 +6,7 @@ from PIL import Image  # type: ignore
 
 import pandas as pd  # type: ignore
 import aspose.words as aw  # type: ignore
-import moviepy.editor as moviepy  # type: ignore
-import imageio.v2 as imageio
+import imageio.v2 as imageio  # type: ignore
 
 
 def convert_to_csv(file: str) -> str:
@@ -34,10 +33,12 @@ def convert_to_image_format(file: str, extension: str) -> str:
     """Converting for image formats"""
     if extension != '.ico':
         image = Image.open(file).convert("RGB")
-        image.save(file.replace(os.path.splitext(f"{Path(file)}")[1], extension))
+        image.save(file.replace(
+            os.path.splitext(f"{Path(file)}")[1], extension))
         return os.path.splitext(file)[0] + extension
     image = imageio.imread(file)
-    imageio.imwrite(file.replace(os.path.splitext(f"{Path(file)}")[1], extension), image)
+    imageio.imwrite(file.replace(
+        os.path.splitext(f"{Path(file)}")[1], extension), image)
     return os.path.splitext(file)[0] + extension
 
 
