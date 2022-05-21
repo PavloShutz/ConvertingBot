@@ -11,7 +11,6 @@ from datetime import datetime
 from path_configures import convert_file
 from save_data import save_data
 
-
 with open('token.txt', 'r') as token_file:
     data = token_file.read()
 
@@ -19,10 +18,15 @@ updater = Updater(data)
 
 extensions_buttons = [[KeyboardButton(".pdf")], [KeyboardButton(".jpeg")],
                       [KeyboardButton(".txt")], [KeyboardButton(".bmp")],
-                      [KeyboardButton(".jpg")], [KeyboardButton(".gif")],
-                      [KeyboardButton(".pptx")], [KeyboardButton(".bin")]]
+                      [KeyboardButton(".jpg")], [KeyboardButton(".pptx")], 
+                      [KeyboardButton(".bin")], [KeyboardButton(".csv")], 
+                      [KeyboardButton(".mp3")], [KeyboardButton(".docx")], 
+                      [KeyboardButton(".mp4")], [KeyboardButton(".png")],
+                      [KeyboardButton(".ico")]]
 
-buttons = (".pdf", ".jpeg", ".txt", ".bmp", ".jpg", ".gif", ".pptx", ".bin")
+buttons = (".pdf", ".jpeg", ".txt", ".bmp",
+           ".jpg", ".pptx", ".bin", ".csv", ".mp3", ".docx",
+           ".mp4", ".png", ".ico")
 
 
 # uses filedialog from tkinter
@@ -58,13 +62,21 @@ def reply_message(update, context):
     """Bot sends a file if input is valid extension"""
     chat = update.effective_chat
     if update.message.text in buttons:
-        file = open_file()
-        new_file = convert_file(file, update.message.text)
-        context.bot.send_document(chat_id=chat.id,
-                                  document=open(new_file, 'rb'),
-                                  filename=new_file)['document']
-        os.remove(new_file)
-        save_data(update.message.chat.first_name, update.message.text, f'Sent document: {new_file}', datetime.now())
+        try:
+            file = open_file()
+            new_file = convert_file(file, update.message.text)
+            context.bot.send_document(chat_id=chat.id,
+                                      document=open(new_file, 'rb'),
+                                      filename=new_file,
+                                      timeout=100)['document']
+            os.remove(new_file)
+            save_data(update.message.chat.first_name,
+                      update.message.text,
+                      f'Sent document: {new_file}', datetime.now())
+        except FileNotFoundError:
+            context.bot.send_message(chat_id=chat.id,
+                                     text="Couldn't convert this "
+                                          f"file to {update.message.text} 😥")
     else:
         context.bot.send_message(chat_id=chat.id, text="Unknown command 🤷‍♂️")
 
