@@ -16,26 +16,26 @@ with open('token.txt', 'r') as token_file:
 
 updater = Updater(data)
 
-extensions_buttons = [[KeyboardButton(".pdf")], [KeyboardButton(".jpeg")],
-                      [KeyboardButton(".txt")], [KeyboardButton(".bmp")],
-                      [KeyboardButton(".jpg")], [KeyboardButton(".pptx")],
-                      [KeyboardButton(".bin")], [KeyboardButton(".csv")],
-                      [KeyboardButton(".mp3")], [KeyboardButton(".docx")],
-                      [KeyboardButton(".mp4")], [KeyboardButton(".png")],
-                      [KeyboardButton(".ico")]]
+extensions_buttons = [[KeyboardButton("PDF")], [KeyboardButton("JPEG")],
+                      [KeyboardButton("TXT")], [KeyboardButton("BMP")],
+                      [KeyboardButton("JPG")], [KeyboardButton("PPTX")],
+                      [KeyboardButton("CSV")], [KeyboardButton("MP3")],
+                      [KeyboardButton("DOCX")], [KeyboardButton("MP4")],
+                      [KeyboardButton("PNG")], [KeyboardButton("ICO")],
+                      [KeyboardButton("DOC")], [KeyboardButton("TIFF")]]
 
 buttons = (".pdf", ".jpeg", ".txt", ".bmp",
-           ".jpg", ".pptx", ".bin", ".csv", ".mp3", ".docx",
-           ".mp4", ".png", ".ico")
+           ".jpg", ".pptx", ".csv", ".mp3", ".docx",
+           ".doc", ".mp4", ".png", ".ico", ".tiff")
 
 
 # uses filedialog from tkinter
-def open_file():
+def open_file() -> str:
     """Opens file in a new filedialog window"""
     return filedialog.askopenfilename(title="Select a File")
 
 
-def start_bot(update, context):
+def start_bot(update, context) -> None:
     """This method starts bot"""
     chat = update.effective_chat
     user_name = update.message.chat.first_name
@@ -50,7 +50,7 @@ def start_bot(update, context):
                                  extensions_buttons))
 
 
-def helper(update, context):
+def helper(update, context) -> None:
     """Return help manager for user"""
     chat = update.effective_chat
     context.bot.send_message(chat_id=chat.id, text="Click the button "
@@ -58,17 +58,17 @@ def helper(update, context):
                                                    "want to get a new file")
 
 
-def reply_message(update, context):
+def reply_message(update, context) -> None:
     """Bot sends a file if input is valid extension"""
     chat = update.effective_chat
-    if update.message.text in buttons:
+    if '.' + update.message.text.lower() in buttons:
         try:
             file = open_file()
-            new_file = convert_file(file, update.message.text)
+            new_file = convert_file(file, '.' + update.message.text.lower())
             context.bot.send_document(chat_id=chat.id,
                                       document=open(new_file, 'rb'),
                                       filename=new_file,
-                                      timeout=100)['document']
+                                      timeout=1000)['document']
             os.remove(new_file)
             save_data(update.message.chat.first_name,
                       update.message.text,
@@ -81,14 +81,14 @@ def reply_message(update, context):
         context.bot.send_message(chat_id=chat.id, text="Unknown command 🤷‍♂️")
 
 
-def dialog_window():
+def dialog_window() -> None:
     """Creates a looping tk window"""
     root = tk.Tk()
     root.withdraw()
     root.mainloop()
 
 
-def server_start():
+def server_start() -> None:
     """starts a server"""
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler('start', start_bot))

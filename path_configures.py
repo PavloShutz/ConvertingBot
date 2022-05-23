@@ -2,7 +2,6 @@
 
 import os
 from pathlib import Path
-import shutil
 
 from convertatings import convert_to_mp4, convert_to_pdf, \
     convert_to_image_format, convert_to_docx, \
@@ -17,7 +16,6 @@ def convert_file(file: str, extension: str) -> str:
     Converts an existing file,
     creating a new copy with another extension.
     """
-    bash_files = '\\'.join(os.getcwd().split("\\"))
     original_path = f"{Path(file)}"
     target_path = \
         f"{os.path.splitext(original_path)[0]}".split("\\")[-1] + extension
@@ -29,9 +27,7 @@ def convert_file(file: str, extension: str) -> str:
         if extension == '.mp3':
             return convert_to_mp3(file)
         elif extension == '.mp4':
-            return convert_to_mp4(original_path,
-                                  os.path.splitext(
-                                      f"{Path(file)}")[0] + ".mp4")
+            return convert_to_mp4(file)
     elif extension in DOCUMENT_FORMATS:
         if extension == '.docx':
             return convert_to_docx(file, target_path)
@@ -41,7 +37,4 @@ def convert_file(file: str, extension: str) -> str:
             return convert_to_pdf(file, target_path)
         elif extension == '.doc':
             return convert_to_doc(file, target_path)
-    with open(f"{bash_files}{target_path}", "w") as f:
-        shutil.copyfile(original_path, f"{bash_files}{target_path}")
-        f.seek(0)
-    return f"{bash_files}{target_path}"
+    return f"Couldn't convert this file to {extension.upper()[1:]} 😥"

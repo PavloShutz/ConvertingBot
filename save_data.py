@@ -3,7 +3,7 @@
 import csv
 
 
-def save_data(username, user_message, bot_message, time_added):
+def save_data(username, user_message, bot_message, time_added) -> None:
     """Appends a new data from bot"""
     with open('data.csv', 'a') as csv_file:
         fieldnames = ['User', 'UserMessage', 'BotMessage',
