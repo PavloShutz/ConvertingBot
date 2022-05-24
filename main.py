@@ -69,7 +69,7 @@ def reply_message(update, context) -> None:
                                       document=open(new_file, 'rb'),
                                       filename=new_file,
                                       timeout=1000)['document']
-            os.remove(new_file)
+            os.remove(new_file)  # removes and saves data in csv file
             save_data(update.message.chat.first_name,
                       update.message.text,
                       f'Sent document: {new_file}', datetime.now())
