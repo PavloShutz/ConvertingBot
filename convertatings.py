@@ -8,7 +8,6 @@ from PIL import Image  # type: ignore
 
 import pandas as pd  # type: ignore
 import aspose.words as aw  # type: ignore
-import imageio.v2 as imageio  # type: ignore
 
 
 def convert_to_csv(file: str, target_path: str) -> str:
@@ -19,7 +18,8 @@ def convert_to_csv(file: str, target_path: str) -> str:
             read_file.to_csv(target_path, index=None)
             f.seek(0)
         return target_path
-    except (UnicodeDecodeError, pd.errors.ParserError, pd.errors.EmptyDataError):
+    except (UnicodeDecodeError, FileNotFoundError,
+            pd.errors.ParserError, pd.errors.EmptyDataError):
         os.remove(target_path)
         return "Couldn't convert this file to CSV 😥"
 
@@ -35,10 +35,13 @@ def convert_to_pdf(file: str, output_file: str) -> str:
 
 
 def convert_to_ico(file: str, extension: str) -> str:
-    image = imageio.imread(file)
-    imageio.imwrite(file.replace(
-        os.path.splitext(f"{Path(file)}")[1], extension), image)
-    return os.path.splitext(file)[0] + extension
+    try:
+        image = Image.open(file)
+        image.save(os.path.splitext(file)[0] + extension,
+                   format='ICO', sizes=[(255, 255)])
+        return os.path.splitext(file)[0] + extension
+    except FileNotFoundError:
+        return "Couldn't convert this file to ICO 😥"
 
 
 def convert_to_image_format(file: str, extension: str) -> str:

@@ -1,7 +1,11 @@
 """Converting Telegram bot"""
 
-import os
-from telegram.ext import Filters, MessageHandler, CommandHandler, Updater
+import os as os
+from telegram.ext import \
+    (Filters,
+     MessageHandler,
+     CommandHandler,
+     Updater)
 from telegram import ReplyKeyboardMarkup, KeyboardButton
 import tkinter as tk
 from tkinter import filedialog
@@ -9,7 +13,7 @@ from threading import Thread
 from datetime import datetime
 
 from path_configures import convert_file
-from save_data import save_data
+from save_data import save_data, show_stats
 
 with open('token.txt', 'r') as token_file:
     data = token_file.read()
@@ -55,7 +59,19 @@ def helper(update, context) -> None:
     chat = update.effective_chat
     context.bot.send_message(chat_id=chat.id, text="Click the button "
                                                    "with the extension you "
-                                                   "want to get a new file")
+                                                   "want to get a new file.\n"
+                                                   "If you don't see "
+                                                   "statistics, "
+                                                   "open your browser.")
+
+
+def show_statistics(update, context) -> None:
+    """Shows statistics of user converting manipulations.
+    Opens browser with histogram.
+    """
+    chat = update.effective_chat
+    context.bot.send_message(chat_id=chat.id, text='Showing statistic...')
+    show_stats()
 
 
 def reply_message(update, context) -> None:
@@ -93,6 +109,7 @@ def server_start() -> None:
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler('start', start_bot))
     dispatcher.add_handler(CommandHandler('help', helper))
+    dispatcher.add_handler(CommandHandler('stats', show_statistics))
     dispatcher.add_handler(MessageHandler(Filters.all, reply_message))
     updater.start_polling()
 
