@@ -12,15 +12,15 @@ from file_formats import IMAGES_FORMATS, VIDEO_FORMATS, DOCUMENT_FORMATS
 
 # initializing dicts for three types of file formats
 FUNCTIONS_FOR_VIDEO_FORMATS = {'.mp4': Vc.convert_to_mp4,
-                               '.mp3': Vc.convert_to_mp3}
+                               '.mp3': Vc.convert_to_mp3, }
 
-FUNCTIONS_FOR_IMAGE_FORMATS = {'image': convert_to_image_format}
+FUNCTIONS_FOR_IMAGE_FORMATS = {'image': convert_to_image_format, }
 
 FUNCTIONS_FOR_DOCUMENT_FORMATS = {'.csv': convert_to_csv,
                                   'docx': convert_to_docx,
                                   '.doc': convert_to_doc,
                                   '.pdf': convert_to_pdf,
-                                  '.txt': convert_to_txt}
+                                  '.txt': convert_to_txt, }
 
 
 def convert_file(file: str, extension: str) -> str:

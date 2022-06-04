@@ -28,9 +28,10 @@ extensions_buttons = [[KeyboardButton("PDF")], [KeyboardButton("JPEG")],
                       [KeyboardButton("PNG")], [KeyboardButton("ICO")],
                       [KeyboardButton("DOC")], [KeyboardButton("TIFF")]]
 
-buttons = (".pdf", ".jpeg", ".txt", ".bmp",
-           ".jpg", ".pptx", ".csv", ".mp3", ".docx",
-           ".doc", ".mp4", ".png", ".ico", ".tiff")
+# all available extensions
+extensions = (".pdf", ".jpeg", ".txt", ".bmp",
+              ".jpg", ".pptx", ".csv", ".mp3", ".docx",
+              ".doc", ".mp4", ".png", ".ico", ".tiff")
 
 
 # uses filedialog from tkinter
@@ -77,7 +78,7 @@ def show_statistics(update, context) -> None:
 def reply_message(update, context) -> None:
     """Bot sends a file if input is valid extension"""
     chat = update.effective_chat
-    if '.' + update.message.text.lower() in buttons:
+    if '.' + update.message.text.lower() in extensions:
         try:
             file = open_file()
             new_file = convert_file(file, '.' + update.message.text.lower())
@@ -97,7 +98,7 @@ def reply_message(update, context) -> None:
         context.bot.send_message(chat_id=chat.id, text="Unknown command 🤷‍♂️")
 
 
-def dialog_window() -> None:
+def filedialog_window() -> None:
     """Creates a looping tk window"""
     root = tk.Tk()
     root.withdraw()
@@ -117,7 +118,7 @@ def server_start() -> None:
 # we're creating two threads: one for tk window,
 # another for bot`s server
 if __name__ == '__main__':
-    thread1 = Thread(target=dialog_window)
+    thread1 = Thread(target=filedialog_window)
     thread2 = Thread(target=server_start)
     thread1.start()
     thread2.start()
