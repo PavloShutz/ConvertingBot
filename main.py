@@ -1,6 +1,6 @@
 """Converting Telegram bot"""
 
-import os as os
+import os
 from telegram.ext import \
     (Filters,
      MessageHandler,
@@ -15,9 +15,7 @@ from datetime import datetime
 from path_configures import convert_file
 from save_data import save_data, show_stats
 
-with open('token.txt', 'r') as token_file:
-    data = token_file.read()
-
+data = os.environ.get('CBToken')
 updater = Updater(data)
 
 extensions_buttons = [[KeyboardButton("PDF")], [KeyboardButton("JPEG")],
