@@ -15,8 +15,8 @@ from datetime import datetime
 from path_configures import convert_file
 from save_data import save_data, show_stats
 
-data = os.environ.get('CBToken')
-updater = Updater(data)
+token = os.environ.get('CBToken')
+updater = Updater(token)
 
 extensions_buttons = [[KeyboardButton("PDF")], [KeyboardButton("JPEG")],
                       [KeyboardButton("TXT")], [KeyboardButton("BMP")],
