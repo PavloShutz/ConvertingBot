@@ -23,6 +23,13 @@ FUNCTIONS_FOR_DOCUMENT_FORMATS = {'.csv': convert_to_csv,
                                   '.txt': convert_to_txt, }
 
 
+def _set_target_path(file: str, extension: str) -> str:
+    original_path = f"{Path(file)}"
+    target_path = \
+        f"{os.path.splitext(original_path)[0]}".split("\\")[-1] + extension
+    return target_path
+
+
 def convert_file(file: str, extension: str) -> str:
     """
     Converts an existing file,
@@ -30,9 +37,7 @@ def convert_file(file: str, extension: str) -> str:
     and extension are valid.
     """
     # setting original path and target path for our file
-    original_path = f"{Path(file)}"
-    target_path = \
-        f"{os.path.splitext(original_path)[0]}".split("\\")[-1] + extension
+    target_path = _set_target_path(file, extension)
     if extension in DOCUMENT_FORMATS:
         return FUNCTIONS_FOR_DOCUMENT_FORMATS[extension](file, target_path)
     elif extension in IMAGES_FORMATS:
