@@ -17,7 +17,7 @@ FUNCTIONS_FOR_VIDEO_FORMATS = {'.mp4': Vc.convert_to_mp4,
 FUNCTIONS_FOR_IMAGE_FORMATS = {'image': convert_to_image_format, }
 
 FUNCTIONS_FOR_DOCUMENT_FORMATS = {'.csv': convert_to_csv,
-                                  'docx': convert_to_docx,
+                                  '.docx': convert_to_docx,
                                   '.doc': convert_to_doc,
                                   '.pdf': convert_to_pdf,
                                   '.txt': convert_to_txt, }
@@ -31,11 +31,9 @@ def _set_target_path(file: str, extension: str) -> str:
 
 
 def convert_file(file: str, extension: str) -> str:
-    """
-    Converts an existing file,
+    """Converts an existing file,
     creating a new copy with another extension if input file
-    and extension are valid.
-    """
+    and extension are valid."""
     # setting original path and target path for our file
     target_path = _set_target_path(file, extension)
     if extension in DOCUMENT_FORMATS:
