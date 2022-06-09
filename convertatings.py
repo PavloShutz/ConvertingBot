@@ -44,16 +44,29 @@ def convert_to_ico(file: str, extension: str) -> str:
         return "Couldn't convert this file to ICO 😥"
 
 
+def convert_to_jpg(file: str, extension: str) -> str:
+    try:
+        image = Image.open(file)
+        rgb_image = image.convert("RGB")
+        rgb_image.save(os.path.splitext(file)[0] + extension)
+        return os.path.splitext(file)[0] + extension
+    except (FileNotFoundError, AttributeError):
+        return "Couldn't convert this file to JPG 😥"
+
+
 def convert_to_image_format(file: str, extension: str) -> str:
     """Converting for image formats"""
     try:
-        if extension != '.ico':
+        if extension not in ('.ico', '.jpg'):
             image = Image.open(file).convert("RGB")
             image.save(file.replace(
                 os.path.splitext(f"{Path(file)}")[1], extension),
                 extension.upper()[1:])
             return os.path.splitext(file)[0] + extension
-        return convert_to_ico(file, '.ico')
+        else:
+            if extension == '.ico':
+                return convert_to_ico(file, '.ico')
+            return convert_to_jpg(file, '.jpg')
     except PIL.UnidentifiedImageError:
         return f"Couldn't convert this file to {extension.upper()[1:]} 😥"
 

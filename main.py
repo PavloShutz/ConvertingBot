@@ -1,7 +1,8 @@
 """Converting Telegram bot"""
 
 import os
-from typing import Optional
+
+import telegram
 from telegram.ext import \
     (Filters,
      MessageHandler,
@@ -21,11 +22,13 @@ from save_data import save_data, show_stats
 from localization import translate_to_language
 from available_langs import LANGUAGES
 
+# getting token and language for bot
 token = os.environ.get('CBToken')
 updater = Updater(token)
 with open('language.txt', 'r') as f:
     language = f.read()
 
+# buttons for extensions
 extensions_buttons = [[KeyboardButton("PDF")], [KeyboardButton("JPEG")],
                       [KeyboardButton("TXT")], [KeyboardButton("BMP")],
                       [KeyboardButton("JPG")],
@@ -39,10 +42,12 @@ extensions = (".pdf", ".jpeg", ".txt", ".bmp",
               ".jpg", ".pptx", ".csv", ".mp3", ".docx",
               ".doc", ".mp4", ".png", ".ico", ".tiff")
 
+# all available languages
 languages = [[KeyboardButton(lang.title())] for lang in LANGUAGES.values()]
 
 
 def get_lang_key(input_dict, value) -> str:
+    """Getting key from LANGUAGES by value"""
     for key, val in input_dict.items():
         if value == val:
             return key
@@ -50,6 +55,7 @@ def get_lang_key(input_dict, value) -> str:
 
 
 def save_lang(lang: str) -> None:
+    """Saves user's chosen language"""
     with open('language.txt', 'w') as file:
         file.write(lang)
 
@@ -66,7 +72,7 @@ def start_bot(update, context) -> None:
     user_name = update.message.chat.first_name
     context.bot.send_message(chat_id=chat.id,
                              text=translate_to_language(f"Hello {user_name}, "
-                                                        f"I'm a converting bot. "
+                                                        f"I'm a bot convertor.\n"
                                                         f"If you want to convert "
                                                         "any file, please choose a button "
                                                         "below."
@@ -97,13 +103,15 @@ def show_statistics(update, context) -> None:
 
 
 def language_changing(update, context) -> int:
+    """Begins a new conversation"""
     chat = update.effective_chat
     context.bot.send_message(chat_id=chat.id, text=translate_to_language(
         'Please, select language', language), reply_markup=ReplyKeyboardMarkup(languages))
     return 1
 
 
-def change_lang(update, context) -> Optional[int]:
+def change_lang(update, context) -> int:
+    """Changing language"""
     global language
     chat = update.effective_chat
     if update.message.text.lower() in LANGUAGES.values():
@@ -119,7 +127,7 @@ def change_lang(update, context) -> Optional[int]:
         return ConversationHandler.END
 
 
-def reply_message(update, context) -> None:
+def send_document(update, context) -> None:
     """Bot sends a file if input is valid extension"""
     chat = update.effective_chat
     if '.' + update.message.text.lower() in extensions:
@@ -134,17 +142,17 @@ def reply_message(update, context) -> None:
             save_data(update.message.chat.first_name,
                       update.message.text,
                       f'Sent document: {new_file}', datetime.now())
-        except FileNotFoundError:
-            context.bot.send_message(chat_id=chat.id, text=
-            translate_to_language("Couldn't convert this "
-                                  f"file to {update.message.text} 😥",
-                                  language))
+        except (FileNotFoundError, telegram.error.TimedOut):
+            context.bot.send_message(chat_id=chat.id, text=translate_to_language("Couldn't convert this "
+                                                                                 f"file to {update.message.text} 😥",
+                                                                                 language))
     else:
         context.bot.send_message(chat_id=chat.id, text=translate_to_language("Unknown command 🤷‍♂️",
                                                                              language))
 
 
-conv_handler = ConversationHandler(
+# creating a new conversation handler for changing language
+conv_lang_handler = ConversationHandler(
     entry_points=[CommandHandler('language', language_changing)],
     states={
         1: [MessageHandler(Filters.text, change_lang, pass_user_data=True)]
@@ -164,11 +172,11 @@ def filedialog_window() -> None:
 def server_start() -> None:
     """starts a server"""
     dispatcher = updater.dispatcher
-    dispatcher.add_handler(conv_handler)
+    dispatcher.add_handler(conv_lang_handler)
     dispatcher.add_handler(CommandHandler('start', start_bot))
     dispatcher.add_handler(CommandHandler('help', helper))
     dispatcher.add_handler(CommandHandler('stats', show_statistics))
-    dispatcher.add_handler(MessageHandler(Filters.all, reply_message))
+    dispatcher.add_handler(MessageHandler(Filters.all, send_document))
     updater.start_polling()
 
 

@@ -1,4 +1,4 @@
-from googletrans import Translator
+from googletrans import Translator  # type: ignore
 
 
 def translate_to_language(text: str, language: str) -> str:
