@@ -86,7 +86,7 @@ def helper(update, context) -> None:
     chat = update.effective_chat
     context.bot.send_message(chat_id=chat.id, text=translate_to_language("Click the button "
                                                                          "with the extension you "
-                                                                         "want to get a new file.\n"
+                                                                         "want to get a new file. \n"
                                                                          "If you don't see "
                                                                          "statistics, "
                                                                          "open your browser.", language))
