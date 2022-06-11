@@ -79,12 +79,14 @@ def start_bot(update, context) -> None:
     chat = update.effective_chat
     user_name = update.message.chat.first_name
     context.bot.send_message(chat_id=chat.id,
-                             text=translate_to_language(f"Hello {user_name}, "
-                                                        f"I'm a bot convertor.\n"
-                                                        f"If you want to convert "
-                                                        "any file, please choose a button "
-                                                        "below."
-                                                        "\nWrite /help for more info.", f"{language}"),
+                             text=translate_to_language(
+                                 f"Hello {user_name}, "
+                                 f"I'm a bot convertor.\n"
+                                 f"If you want to convert "
+                                 "any file, please choose a button "
+                                 "below."
+                                 "\nWrite /help for more info.",
+                                 f"{language}"),
                              reply_markup=ReplyKeyboardMarkup(
                                  extensions_buttons))
 
@@ -92,12 +94,14 @@ def start_bot(update, context) -> None:
 def helper(update, context) -> None:
     """Return help manager for user"""
     chat = update.effective_chat
-    context.bot.send_message(chat_id=chat.id, text=translate_to_language("Click the button "
-                                                                         "with the extension you "
-                                                                         "want to get a new file. \n"
-                                                                         "If you don't see "
-                                                                         "statistics, "
-                                                                         "open your browser.", language))
+    context.bot.send_message(chat_id=chat.id,
+                             text=translate_to_language(
+                                 "Click the button "
+                                 "with the extension you "
+                                 "want to get a new file. \n"
+                                 "If you don't see "
+                                 "statistics, "
+                                 "open your browser.", language))
 
 
 def show_statistics(update, context) -> None:
@@ -114,8 +118,9 @@ def language_changing(update, context) -> int:
     """Begins a new conversation"""
     chat = update.effective_chat
     context.bot.send_message(chat_id=chat.id, text=translate_to_language(
-        'Please, select language', language), reply_markup=ReplyKeyboardMarkup(languages))
-    return 1
+        'Please, select language', language),
+                             reply_markup=ReplyKeyboardMarkup(languages))
+    return EXPECTED_LANG
 
 
 def change_lang(update, context) -> int:
@@ -149,21 +154,27 @@ def send_document(update, context) -> None:
             save_delete_data(new_file, update.message.chat.first_name,
                              update.message.text)
         except (FileNotFoundError, telegram.error.TimedOut):
-            context.bot.send_message(chat_id=chat.id, text=translate_to_language("Couldn't convert this "
-                                                                                 f"file to {update.message.text} 😥",
-                                                                                 language))
+            context.bot.send_message(chat_id=chat.id,
+                                     text=translate_to_language(
+                                         "Couldn't convert this "
+                                         f"file to {update.message.text} 😥",
+                                         language))
     else:
-        context.bot.send_message(chat_id=chat.id, text=translate_to_language("Unknown command 🤷‍♂️",
-                                                                             language))
+        context.bot.send_message(chat_id=chat.id,
+                                 text=translate_to_language(
+                                     "Unknown command 🤷‍♂️",
+                                     language))
 
 
 # creating a new conversation handler for changing language
 conv_lang_handler = ConversationHandler(
     entry_points=[CommandHandler('language', language_changing)],
     states={
-        EXPECTED_LANG: [MessageHandler(Filters.text, change_lang, pass_user_data=True)]
+        EXPECTED_LANG:
+            [MessageHandler(Filters.text, change_lang, pass_user_data=True)]
     },
-    fallbacks=[CommandHandler('start', start_bot), CommandHandler('help', helper),
+    fallbacks=[CommandHandler('start', start_bot),
+               CommandHandler('help', helper),
                CommandHandler('stats', show_statistics)]
 )
 
