@@ -1,3 +1,5 @@
+"""Available languages"""
+
 LANGUAGES = {
     'af': 'afrikaans',
     'sq': 'albanian',

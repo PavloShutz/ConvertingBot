@@ -28,6 +28,8 @@ updater = Updater(token)
 with open('language.txt', 'r') as f:
     language = f.read()
 
+EXPECTED_LANG = 1
+
 # buttons for extensions
 extensions_buttons = [[KeyboardButton("PDF")], [KeyboardButton("JPEG")],
                       [KeyboardButton("TXT")], [KeyboardButton("BMP")],
@@ -60,6 +62,12 @@ def save_lang(lang: str) -> None:
         file.write(lang)
 
 
+def save_delete_data(file: str, name: str, message: str) -> None:
+    """Deleting created file and then saving data into csv file."""
+    os.remove(file)
+    save_data(name, message, f'Sent document: {file}', datetime.now())
+
+
 # uses filedialog from tkinter
 def open_file() -> str:
     """Opens file in a new filedialog window"""
@@ -67,7 +75,7 @@ def open_file() -> str:
 
 
 def start_bot(update, context) -> None:
-    """This method starts bot"""
+    """starts bot"""
     chat = update.effective_chat
     user_name = update.message.chat.first_name
     context.bot.send_message(chat_id=chat.id,
@@ -128,7 +136,7 @@ def change_lang(update, context) -> int:
 
 
 def send_document(update, context) -> None:
-    """Bot sends a file if input is valid extension"""
+    """Bot sends a file if input extension is valid"""
     chat = update.effective_chat
     if '.' + update.message.text.lower() in extensions:
         try:
@@ -138,10 +146,8 @@ def send_document(update, context) -> None:
                                       document=open(new_file, 'rb'),
                                       filename=new_file,
                                       timeout=1000)['document']
-            os.remove(new_file)  # removes and saves data in csv file
-            save_data(update.message.chat.first_name,
-                      update.message.text,
-                      f'Sent document: {new_file}', datetime.now())
+            save_delete_data(new_file, update.message.chat.first_name,
+                             update.message.text)
         except (FileNotFoundError, telegram.error.TimedOut):
             context.bot.send_message(chat_id=chat.id, text=translate_to_language("Couldn't convert this "
                                                                                  f"file to {update.message.text} 😥",
@@ -155,7 +161,7 @@ def send_document(update, context) -> None:
 conv_lang_handler = ConversationHandler(
     entry_points=[CommandHandler('language', language_changing)],
     states={
-        1: [MessageHandler(Filters.text, change_lang, pass_user_data=True)]
+        EXPECTED_LANG: [MessageHandler(Filters.text, change_lang, pass_user_data=True)]
     },
     fallbacks=[CommandHandler('start', start_bot), CommandHandler('help', helper),
                CommandHandler('stats', show_statistics)]
