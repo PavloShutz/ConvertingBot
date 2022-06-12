@@ -1,6 +1,7 @@
 """Converting Telegram bot"""
 
 import os
+from typing import AnyStr
 
 import telegram
 from telegram.ext import \
@@ -48,7 +49,7 @@ extensions = (".pdf", ".jpeg", ".txt", ".bmp",
 languages = [[KeyboardButton(lang.title())] for lang in LANGUAGES.values()]
 
 
-def get_lang_key(input_dict, value) -> str:
+def get_lang_key(input_dict: dict, value: AnyStr) -> str:
     """Getting key from LANGUAGES by value"""
     for key, val in input_dict.items():
         if value == val:
