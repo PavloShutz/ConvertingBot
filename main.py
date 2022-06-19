@@ -131,13 +131,15 @@ def change_lang(update, context) -> int:
     if update.message.text.lower() in LANGUAGES.values():
         language = get_lang_key(LANGUAGES, update.message.text.lower())
         context.bot.send_message(chat_id=chat.id, text=translate_to_language(
-            "You've successfully changed language", language))
+            "You've successfully changed language", language), reply_markup=ReplyKeyboardMarkup(
+                                 extensions_buttons))
         save_lang(language)
         return ConversationHandler.END
     else:
         context.bot.send_message(chat_id=chat.id, text=translate_to_language(
             "Unknown language",
-            language))
+            language), reply_markup=ReplyKeyboardMarkup(
+                                 extensions_buttons))
         return ConversationHandler.END
 
 
