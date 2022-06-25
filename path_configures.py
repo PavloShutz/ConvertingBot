@@ -3,43 +3,48 @@
 import os
 from pathlib import Path
 
-from convertatings import VideoConvert as Vc, convert_to_pdf, \
-    convert_to_image_format, convert_to_docx, \
-    convert_to_csv, convert_to_txt, \
-    convert_to_doc
+from convertatings import VideoConvert as Vc, DocumentConvertor as Dc, \
+    ImageConvertor as Ic
 from file_formats import IMAGES_FORMATS, VIDEO_FORMATS, DOCUMENT_FORMATS
 
 
-# initializing dicts for three types of file formats
-FUNCTIONS_FOR_VIDEO_FORMATS = {'.mp4': Vc.convert_to_mp4,
-                               '.mp3': Vc.convert_to_mp3, }
+class ConvertedFile:
+        
+    def __init__(self, file, extension):
+        self.file = file
+        self.extension = extension
+        self.__target_path = self.__set_target_path()
+        docs_formater = Dc(self.file, self.__target_path)
+        # initializing dicts for three types of file formats
+        self.FUNCTIONS_FOR_VIDEO_FORMATS = {'video': 
+                        Vc(self.file, self.extension).make_video_file_convert}
 
-FUNCTIONS_FOR_IMAGE_FORMATS = {'image': convert_to_image_format, }
+        self.FUNCTIONS_FOR_IMAGE_FORMATS = {'image': Ic(self.file, self.extension).convert_to_image_format}
 
-FUNCTIONS_FOR_DOCUMENT_FORMATS = {'.csv': convert_to_csv,
-                                  '.docx': convert_to_docx,
-                                  '.doc': convert_to_doc,
-                                  '.pdf': convert_to_pdf,
-                                  '.txt': convert_to_txt, }
+        self.FUNCTIONS_FOR_DOCUMENT_FORMATS = {
+                                        '.csv': docs_formater.convert_to_csv,
+                                        '.docx': docs_formater.convert_to_docx,
+                                        '.doc': docs_formater.convert_to_doc,
+                                        '.pdf': docs_formater.convert_to_pdf,
+                                        '.txt': docs_formater.convert_to_txt,
+                                        }
+
+    def __set_target_path(self) -> str:
+        original_path = f"{Path(self.file)}"
+        target_path = \
+            f"{os.path.splitext(original_path)[0]}".split("\\")[-1] + self.extension
+        return target_path
 
 
-def _set_target_path(file: str, extension: str) -> str:
-    original_path = f"{Path(file)}"
-    target_path = \
-        f"{os.path.splitext(original_path)[0]}".split("\\")[-1] + extension
-    return target_path
-
-
-def convert_file(file: str, extension: str) -> str:
-    """Converts an existing file,
-    creating a new copy with another extension if input file
-    and extension are valid."""
-    # setting original path and target path for our file
-    target_path = _set_target_path(file, extension)
-    if extension in DOCUMENT_FORMATS:
-        return FUNCTIONS_FOR_DOCUMENT_FORMATS[extension](file, target_path)
-    elif extension in IMAGES_FORMATS:
-        return FUNCTIONS_FOR_IMAGE_FORMATS['image'](file, extension)
-    elif extension in VIDEO_FORMATS:
-        return FUNCTIONS_FOR_VIDEO_FORMATS[extension](file, extension)
-    return f"Couldn't convert this file to {extension.upper()[1:]} 😥"
+    def convert_file(self) -> str:
+        """Converts an existing file,
+        creating a new copy with another extension if input file
+        and extension are valid."""
+        # setting original path and target path for our file
+        if self.extension in DOCUMENT_FORMATS:
+            return self.FUNCTIONS_FOR_DOCUMENT_FORMATS[self.extension]()
+        elif self.extension in IMAGES_FORMATS:
+            return self.FUNCTIONS_FOR_IMAGE_FORMATS['image']()
+        elif self.extension in VIDEO_FORMATS:
+            return self.FUNCTIONS_FOR_VIDEO_FORMATS['video']()
+        return f"Couldn't convert this file to {self.extension.upper()[1:]} 😥"
