@@ -9,32 +9,45 @@ from file_formats import IMAGES_FORMATS, VIDEO_FORMATS, DOCUMENT_FORMATS
 
 
 class ConvertedFile:
-        
-    def __init__(self, file, extension):
+    """Class that returns converted file."""
+
+    def __init__(self, file: str, extension: str):
+        """
+        Args:
+            file (str): absolute path to file for converting.
+            extension (str): expected extension to convert input file.
+        """
         self.file = file
         self.extension = extension
         self.__target_path = self.__set_target_path()
-        docs_formater = Dc(self.file, self.__target_path)
+        docs_formatter = Dc(self.file, self.__target_path)
         # initializing dicts for three types of file formats
-        self.FUNCTIONS_FOR_VIDEO_FORMATS = {'video': 
-                        Vc(self.file, self.extension).make_video_file_convert}
+        self.FUNCTIONS_FOR_VIDEO_FORMATS = {'video':
+                                                Vc(self.file,
+                                                   self.extension).
+                                                    make_video_file_convert}
 
-        self.FUNCTIONS_FOR_IMAGE_FORMATS = {'image': Ic(self.file, self.extension).convert_to_image_format}
+        self.FUNCTIONS_FOR_IMAGE_FORMATS = \
+            {'image': Ic(self.file, self.extension).convert_to_image_format}
 
         self.FUNCTIONS_FOR_DOCUMENT_FORMATS = {
-                                        '.csv': docs_formater.convert_to_csv,
-                                        '.docx': docs_formater.convert_to_docx,
-                                        '.doc': docs_formater.convert_to_doc,
-                                        '.pdf': docs_formater.convert_to_pdf,
-                                        '.txt': docs_formater.convert_to_txt,
-                                        }
+            '.csv': docs_formatter.convert_to_csv,
+            '.docx': docs_formatter.convert_to_docx,
+            '.doc': docs_formatter.convert_to_doc,
+            '.pdf': docs_formatter.convert_to_pdf,
+            '.txt': docs_formatter.convert_to_txt,
+        }
 
     def __set_target_path(self) -> str:
+        """Creating target path for input file.
+        Returns:
+            formed target path.
+        """
         original_path = f"{Path(self.file)}"
         target_path = \
-            f"{os.path.splitext(original_path)[0]}".split("\\")[-1] + self.extension
+            f"{os.path.splitext(original_path)[0]}".split("\\")[-1] \
+            + self.extension
         return target_path
-
 
     def convert_file(self) -> str:
         """Converts an existing file,

@@ -8,13 +8,20 @@ from plotly.graph_objs import Bar, Layout  # type: ignore
 from plotly import offline  # type: ignore
 
 
-class DataSaver:
+class DataManager:
+    """Class implementing saving and managing csv data."""
 
     def __init__(self):
         self.file = 'data.csv'
 
-    def __collect_data(self, filename: str) -> list:
-        """Get file formats and their amount"""
+    @staticmethod
+    def __collect_data(filename: str) -> list:
+        """Get file formats and their amount.
+        Args:
+            filename (str): filename to get extensions from.
+        Returns:
+            list of extensions.
+        """
         with open(filename) as f:
             reader = csv.reader(f)
             next(reader)
@@ -26,23 +33,38 @@ class DataSaver:
                     continue
         return file_extensions
 
-    def save_delete_data(self, file: str, name: str, message: str) -> None:
-        """Deleting created file and then saving data into csv file."""
+    def save_delete_data(self, file: str,
+                         user_name: str, message: str) -> None:
+        """Deleting created file and then saving data into csv file.
+        Args:
+            file (str): file to save data in.
+            user_name (str): user's name to save.
+            message (str): user's message to save.
+        """
         os.remove(file)
-        self.__save_data(name, message, f'Sent document: {file}', datetime.now())
+        self.__save_data(user_name, message,
+                         f'Sent document: {file}', datetime.now())
 
-    def __save_data(self, username, user_message, bot_message, time_added) -> None:
-        """Appends a new data from bot"""
+    def __save_data(self, username: str, user_message: str,
+                    bot_message: str, time_added: datetime) -> None:
+        """Appends a new data from bot.
+        Args:
+            username (str): user's name to save.
+            user_message (str): user's message to save.
+            bot_message (str): bot`s reply message to save.
+            time_added (datetime): time the bot sent message to save.
+        """
         with open(self.file, 'a') as csv_file:
             fieldnames = ['User', 'UserMessage', 'BotMessage',
-                        'Time']
+                          'Time']
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
             writer.writerow({'User': username, 'UserMessage': user_message,
                             'BotMessage': bot_message, 'Time': time_added})
 
     def show_stats(self) -> None:
-        """Shows a histogram"""
-        y_values = [self.__collect_data(self.file).count(i) for i in set(self.__collect_data(self.file))]
+        """Shows a histogram in web-browser."""
+        y_values = [self.__collect_data(self.file).count(i)
+                    for i in set(self.__collect_data(self.file))]
         x_values = list(set(self.__collect_data(self.file)))
         data = [Bar(x=x_values, y=y_values)]
 
